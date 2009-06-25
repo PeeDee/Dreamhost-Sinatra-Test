@@ -1,0 +1,48 @@
+h1. Dreamhost Sinatra Test
+
+In trying to get "btw":http://github.com/PeeDee/btw working remotely on Dreamhost it was driving me crazy failing without any diagnostics; so I've put together this smaller set of files and have gotten it working.
+
+h2. Directory Structure
+
+In case it's not clear from the Sinatra book (it wasn't to me), the file tree you require is like this:
+
+<pre>
+my_app_directory - eg. /home/<USER>/sinatra/test
+  /config.ru - the rackup file
+  /my_app.rb - the app
+  /public - has to be there for DH to configure Passenger, even if empty
+  /tmp - has to be there for Passenger, even if empty
+    /restart.txt - Passenger reloads code if the modify timestamp here is new
+</pre>
+
+h2. Rackup File
+
+I'm putting this here instead of checking it into git because you need to edit the gem path for your home directory, and ~ won't do.
+
+<pre>
+## config.ru - rackup file for sinatra on passenger on dreamhost
+
+# Passenger doesn't pick up my own gems without this
+ENV['GEM_PATH'] = '/home/<USER>/.gems:/usr/lib/ruby/gems/1.8'
+
+require 'test'
+
+run Sinatra::Application
+</pre>
+
+h2. Useful command line snippets
+
+ alias tt='touch ~/sinatra/test/tmp/restart.txt'
+ alias access_tail='tail -f ~/logs/DOMAIN_HERE/http/access.log'
+ alias error_tail='tail -f ~/logs/DOMAIN_HERE/http/error.log'
+
+h2. Useful Links
+
+* "Installing gems on DH":http://nateclark.com/articles/2006/10/20/dreamhost-your-own-packages-and-gems - they don't have sinatra or markaby among others, and you may wish to update them all to your local .gems directory
+* "Gem command reference":http://rubygems.org/read/book/2
+* "Dreamhost wiki on sinatra":http://wiki.dreamhost.com/Sinatra
+* "Sinatra at Github":http://sinatra.github.com/
+* "Sinatra book":http://www.sinatrarb.com/book.html#deployment_passenger
+* "Sinatra API":http://www.sinatrarb.com/api/index.html
+* "Haml API":http://haml.hamptoncatlin.com/docs/rdoc/index.html
+* "Git cheat sheet":http://github.com/guides/git-cheat-sheet - not all git commands (eg. git init) are implemented on Dreamhost
